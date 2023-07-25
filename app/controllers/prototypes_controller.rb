@@ -1,6 +1,10 @@
 class PrototypesController < ApplicationController
-  before_action :authenticate_user!
+  #{authenticate_user!メソッドは、処理が呼ばれた段階で、
+  #{ユーザーがログインしていなければ、そのユーザーをログイン画面に遷移させます。}
+  #{}before_action :authenticate_user!,except: [:index, :show]
   before_action :move_to_index, except: [:index, :show]
+  #{一覧ページ}
+  #{}before_action :move_to_index, except: [:index, :show]
 #{一覧ページ}
   def index
     @prototypes = Prototype.all
@@ -11,8 +15,12 @@ class PrototypesController < ApplicationController
   end
 #{登録}
   def create
-    Prototype.create(prototypes_params)
-    redirect_to "/"
+    @prototype = Prototype.create(prototypes_params)
+    if  @prototype.save
+      redirect_to action: :index
+    else
+      render :new, status: :unprocessable_entity
+    end
   end
 #詳細ページ
   def show
@@ -27,8 +35,10 @@ class PrototypesController < ApplicationController
 #{更新内容}
   def update
     @prototype = Prototype.find(params[:id])
+    #{成功した場合、詳細ページに遷移}
+    #{失敗した場合、詳細ページにてエラー文}
     if @prototype.update(prototypes_params)
-      redirect_to root_path
+      redirect_to action: :show
     else
       render :edit, status: :unprocessable_entity
     end
@@ -42,7 +52,6 @@ class PrototypesController < ApplicationController
   end
 
   private
-
   def move_to_index
     unless user_signed_in?
       redirect_to action: :index

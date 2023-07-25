@@ -13,5 +13,5 @@ class User < ApplicationRecord
 
     #{ユーザーアソシエーション}
     has_many :prototypes
-    has_many :comments
+    has_many :comments, dependent: :destroy
 end
