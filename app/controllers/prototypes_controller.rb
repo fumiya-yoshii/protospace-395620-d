@@ -1,8 +1,8 @@
 class PrototypesController < ApplicationController
   #{authenticate_user!メソッドは、処理が呼ばれた段階で、
   #{ユーザーがログインしていなければ、そのユーザーをログイン画面に遷移させます。}
-  #{}before_action :authenticate_user!,except: [:index, :show]
-  before_action :move_to_index, except: [:index, :show]
+  before_action :authenticate_user!,except: [:index, :show]
+  #{}before_action :move_to_index, except: [:index, :show]
   #{一覧ページ}
   #{}before_action :move_to_index, except: [:index, :show]
 #{一覧ページ}
@@ -31,6 +31,7 @@ class PrototypesController < ApplicationController
 #{変更ページ}
   def edit
     @prototype = Prototype.find(params[:id])
+    redirect_to action: :index if current_user.id != @prototype.user.id
   end
 #{更新内容}
   def update
@@ -52,11 +53,11 @@ class PrototypesController < ApplicationController
   end
 
   private
-  def move_to_index
-    unless user_signed_in?
-      redirect_to action: :index
-    end
-  end
+  # def move_to_index
+  #   unless user_signed_in?
+  #     redirect_to action: :index
+  #   end
+  # end
 #{パラメータの中身の名称、どこにIDが入っているのかがわかる}
   def prototypes_params
     params.require(:prototype).permit(:title, :catch_copy, :concept, :image, :content).merge(user_id: current_user.id)
